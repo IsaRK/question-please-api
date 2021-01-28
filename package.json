@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "npm install @azure/functions && tsc",
+    "build": "tsc",
     "watch": "tsc -w",
     "prestart": "npm run build",
     "start": "func start",
