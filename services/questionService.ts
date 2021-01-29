@@ -1,5 +1,6 @@
-import { CosmosClient } from "@azure/cosmos";
-import { exception } from "console";
+import { CosmosClient, UserDefinedFunctionResponse } from "@azure/cosmos";
+import { Console, exception } from "console";
+import { inherits } from "util";
 import { isContext } from "vm";
 
 // Set connection string from CONNECTION_STRING value in local.settings.json
@@ -35,6 +36,14 @@ const questionService = {
   },
 
   async readAll(): Promise<string> {
+    if (this.container === undefined) {
+      throw new exception("this.Container in ReadAll is undefined");
+    }
+
+    if (this.container.items === undefined) {
+      throw new exception("this.Container.items in ReadAll is undefined");
+    }
+
     const iterator = this.container.items.readAll();
     const { resources } = await iterator.fetchAll();
     return JSON.stringify(resources);
@@ -45,6 +54,14 @@ const questionService = {
       query: "SELECT * from c WHERE c.id = \"" + id + "\""
     };
 
+    if (this.container === undefined) {
+      throw new exception("this.Container in ReadOne is undefined");
+    }
+
+    if (this.container.items === undefined) {
+      throw new exception("this.Container.items in ReadOne is undefined");
+    }
+
     console.log("Executing query :" + String(queryOne));
     const { resources } = await this.container.items.query(queryOne).fetchAll();
     return JSON.stringify(resources);
@@ -52,5 +69,6 @@ const questionService = {
 };
 
 questionService.init();
+console.log("Init new question Service");
 
 export default questionService;
