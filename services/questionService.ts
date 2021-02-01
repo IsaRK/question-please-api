@@ -9,7 +9,7 @@ const questionService = {
     try {
       this.client = new CosmosClient(CONNECTION_STRING);
 
-      if (context != undefined) {
+      if (context !== undefined) {
         context.log("*** Connection String " + String(CONNECTION_STRING));
       }
 
@@ -28,6 +28,7 @@ const questionService = {
       }
 
     } catch (err) {
+      context.log(err.message);
       console.log(err.message);
     }
   },
