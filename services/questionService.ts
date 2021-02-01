@@ -82,4 +82,6 @@ const questionService = {
   },
 };
 
+questionService.init();
+
 export default questionService;
