@@ -5,9 +5,13 @@ import { Context } from "@azure/functions";
 const CONNECTION_STRING = process.env.CONNECTION_STRING;
 
 const questionService = {
-  init() {
+  init(context: Context | undefined) {
     try {
       this.client = new CosmosClient(CONNECTION_STRING);
+
+      if (context != undefined) {
+        context.log("*** Connection String " + String(CONNECTION_STRING));
+      }
 
       if (this.client === undefined) {
         throw new Error("questionService.client is undefined");
