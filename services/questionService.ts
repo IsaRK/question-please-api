@@ -28,7 +28,10 @@ const questionService = {
       }
 
     } catch (err) {
-      context.log(err.message);
+      if (context !== undefined) {
+        context.log(err.message);
+      }
+
       console.log(err.message);
     }
   },
