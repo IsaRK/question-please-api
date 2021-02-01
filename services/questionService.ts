@@ -50,6 +50,7 @@ const questionService = {
   },
 
   async readOne(id: string): Promise<string> {
+    /*
     const queryOne = {
       query: "SELECT * from c WHERE c.id = \"" + id + "\""
     };
@@ -64,6 +65,12 @@ const questionService = {
 
     console.log("Executing query :" + String(queryOne));
     const { resources } = await this.container.items.query(queryOne).fetchAll();
+    */
+    const resources = {
+      "id": id,
+      "container": this.container === undefined,
+      "items": this.container.items === undefined
+    };
     return JSON.stringify(resources);
   },
 };
