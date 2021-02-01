@@ -1,6 +1,5 @@
 import { UserDefinedFunctionResponse } from "@azure/cosmos";
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-import { exception } from "console";
 import questionService from "../services/questionService";
 
 const httpTrigger: AzureFunction = async function (
@@ -20,7 +19,7 @@ const httpTrigger: AzureFunction = async function (
     let question;
 
     if (questionService === undefined) {
-      throw exception("Question service is undefined");
+      throw new Error("Question service is undefined");
     }
 
     if (id === undefined) {
