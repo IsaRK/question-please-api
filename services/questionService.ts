@@ -1,7 +1,6 @@
 import { CosmosClient, UserDefinedFunctionResponse } from "@azure/cosmos";
 import { Console, exception } from "console";
 import { inherits } from "util";
-import { isContext } from "vm";
 
 // Set connection string from CONNECTION_STRING value in local.settings.json
 const CONNECTION_STRING = process.env.CONNECTION_STRING;

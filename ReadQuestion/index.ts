@@ -12,6 +12,15 @@ const httpTrigger: AzureFunction = async function (
   var id = context.bindingData.id;
   try {
     let question;
+
+    const resources = {
+      "id": id,
+      "questionService": this.questionService === undefined
+    };
+
+    response = { body: JSON.stringify(resources), status: 200 };
+
+    /*
     if (questionService === undefined) {
       throw new exception("question service is undefined");
     }
@@ -24,6 +33,7 @@ const httpTrigger: AzureFunction = async function (
     }
 
     response = { body: question, status: 200 };
+    */
   } catch (err) {
     response = { body: err.message, status: 500 };
   }
