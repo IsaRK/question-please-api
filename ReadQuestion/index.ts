@@ -10,34 +10,28 @@ const httpTrigger: AzureFunction = async function (
   context.log('ReadQuestion HTTP trigger function processed a request.');
   let response;
 
+  questionService.init();
+
   var id = context.bindingData.id;
+
   try {
     let question;
 
-    const resources = {
-      "id": id,
-      "questionService": questionService === undefined,
-      "container": questionService === undefined ? true : questionService.isContainerUndefined(),
-      "items": questionService === undefined ? true : questionService.isContainerItemsUndefined(),
-    };
-
-    response = { body: JSON.stringify(resources), status: 200 };
-
-    /*
     if (questionService === undefined) {
-      throw new exception("question service is undefined");
+      throw new exception("Question service is undefined");
     }
 
     if (id === undefined) {
-      question = await questionService.readAll();
+      question = await questionService.readAll(context);
     }
     else {
-      question = await questionService.readOne(String(id));
+      question = await questionService.readOne(context, String(id));
     }
 
     response = { body: question, status: 200 };
-    */
+
   } catch (err) {
+    context.log("*** App Logs *** Error catched");
     response = { body: err.message, status: 500 };
   }
 

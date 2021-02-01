@@ -1,6 +1,8 @@
 import { CosmosClient, UserDefinedFunctionResponse } from "@azure/cosmos";
+import { Context } from "@azure/functions";
 import { Console, exception } from "console";
 import { inherits } from "util";
+import { isContext } from "vm";
 
 // Set connection string from CONNECTION_STRING value in local.settings.json
 const CONNECTION_STRING = process.env.CONNECTION_STRING;
@@ -29,42 +31,50 @@ const questionService = {
     }
   },
 
-  async create(questionToCreate) {
+  async create(context: Context, questionToCreate) {
+    context.log("*** Creating new Question");
     const { resource } = await this.container.items.create(questionToCreate);
     return resource;
   },
 
-  async readAll(): Promise<string> {
+  async readAll(context: Context): Promise<string> {
     if (this.container === undefined) {
+      context.log("*** this.Container is undefined ***");
       throw new exception("this.Container in ReadAll is undefined");
     }
 
     if (this.container.items === undefined) {
+      context.log("*** this.Container Item is undefined ***");
       throw new exception("this.Container.items in ReadAll is undefined");
     }
+
+    context.log("*** All context is defined ***");
 
     const iterator = this.container.items.readAll();
     const { resources } = await iterator.fetchAll();
     return JSON.stringify(resources);
   },
 
-  async readOne(id: string): Promise<string> {
-    /*
+  async readOne(context: Context, id: string): Promise<string> {
+
     const queryOne = {
       query: "SELECT * from c WHERE c.id = \"" + id + "\""
     };
 
+    context.log("*** QueryOne is " + queryOne);
+
     if (this.container === undefined) {
+      context.log("*** this.Container is undefined ***");
       throw new exception("this.Container in ReadOne is undefined");
     }
 
     if (this.container.items === undefined) {
+      context.log("*** this.Container Item is undefined ***");
       throw new exception("this.Container.items in ReadOne is undefined");
     }
 
     console.log("Executing query :" + String(queryOne));
-    const { resources } = await this.container.items.query(queryOne).fetchAll();
-    */
+
     const resources = {
       "id": id,
       "container": this.container === undefined,
@@ -72,17 +82,6 @@ const questionService = {
     };
     return JSON.stringify(resources);
   },
-
-  isContainerUndefined(): boolean {
-    return this.container === undefined
-  },
-
-  isContainerItemsUndefined(): boolean {
-    return this.container.items === undefined
-  },
 };
-
-questionService.init();
-console.log("Init new question Service");
 
 export default questionService;
