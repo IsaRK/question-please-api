@@ -6,7 +6,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
   let response;
 
-  questionService.init();
+  questionService.init(undefined);
 
   try {
     const question = req.body;
