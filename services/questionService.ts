@@ -2,7 +2,6 @@ import { CosmosClient, UserDefinedFunctionResponse } from "@azure/cosmos";
 import { Context } from "@azure/functions";
 import { Console, exception } from "console";
 import { inherits } from "util";
-import { isContext } from "vm";
 
 // Set connection string from CONNECTION_STRING value in local.settings.json
 const CONNECTION_STRING = process.env.CONNECTION_STRING;
@@ -13,17 +12,17 @@ const questionService = {
       this.client = new CosmosClient(CONNECTION_STRING);
 
       if (this.client === undefined) {
-        throw new exception("questionService.client is undefined");
+        throw exception("questionService.client is undefined");
       }
 
       this.database = this.client.database("questionplease");
       if (this.database === undefined) {
-        throw new exception("questionService.database is undefined");
+        throw exception("questionService.database is undefined");
       }
 
       this.container = this.database.container("questions");
       if (this.container === undefined) {
-        throw new exception("questionService.container is undefined");
+        throw exception("questionService.container is undefined");
       }
 
     } catch (err) {
@@ -40,12 +39,12 @@ const questionService = {
   async readAll(context: Context): Promise<string> {
     if (this.container === undefined) {
       context.log("*** this.Container is undefined ***");
-      throw new exception("this.Container in ReadAll is undefined");
+      throw exception("this.Container in ReadAll is undefined");
     }
 
     if (this.container.items === undefined) {
       context.log("*** this.Container Item is undefined ***");
-      throw new exception("this.Container.items in ReadAll is undefined");
+      throw exception("this.Container.items in ReadAll is undefined");
     }
 
     context.log("*** All context is defined ***");
@@ -65,12 +64,12 @@ const questionService = {
 
     if (this.container === undefined) {
       context.log("*** this.Container is undefined ***");
-      throw new exception("this.Container in ReadOne is undefined");
+      throw exception("this.Container in ReadOne is undefined");
     }
 
     if (this.container.items === undefined) {
       context.log("*** this.Container Item is undefined ***");
-      throw new exception("this.Container.items in ReadOne is undefined");
+      throw exception("this.Container.items in ReadOne is undefined");
     }
 
     console.log("Executing query :" + String(queryOne));
@@ -80,6 +79,7 @@ const questionService = {
       "container": this.container === undefined,
       "items": this.container.items === undefined
     };
+
     return JSON.stringify(resources);
   },
 };

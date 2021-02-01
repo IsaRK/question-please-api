@@ -10,7 +10,9 @@ const httpTrigger: AzureFunction = async function (
   context.log('ReadQuestion HTTP trigger function processed a request.');
   let response;
 
+  context.log("*** Init Service ***");
   questionService.init();
+  context.log("*** Inited Service ***");
 
   var id = context.bindingData.id;
 
@@ -18,7 +20,7 @@ const httpTrigger: AzureFunction = async function (
     let question;
 
     if (questionService === undefined) {
-      throw new exception("Question service is undefined");
+      throw exception("Question service is undefined");
     }
 
     if (id === undefined) {
