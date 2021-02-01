@@ -72,6 +72,14 @@ const questionService = {
     };
     return JSON.stringify(resources);
   },
+
+  isContainerUndefined(): boolean {
+    return this.container === undefined
+  },
+
+  isContainerItemsUndefined(): boolean {
+    return this.container.items === undefined
+  },
 };
 
 questionService.init();

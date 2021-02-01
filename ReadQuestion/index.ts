@@ -1,3 +1,4 @@
+import { UserDefinedFunctionResponse } from "@azure/cosmos";
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { exception } from "console";
 import questionService from "../services/questionService";
@@ -15,7 +16,9 @@ const httpTrigger: AzureFunction = async function (
 
     const resources = {
       "id": id,
-      "questionService": this.questionService === undefined
+      "questionService": questionService === undefined,
+      "container": questionService === undefined ? true : questionService.isContainerUndefined(),
+      "items": questionService === undefined ? true : questionService.isContainerItemsUndefined(),
     };
 
     response = { body: JSON.stringify(resources), status: 200 };
