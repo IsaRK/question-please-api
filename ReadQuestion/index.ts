@@ -9,9 +9,11 @@ const httpTrigger: AzureFunction = async function (
   context.log('ReadQuestion HTTP trigger function processed a request.');
   let response;
 
+  /*
   context.log("*** Init Service ***");
   questionService.init(context);
   context.log("*** Inited Service ***");
+  */
 
   var id = context.bindingData.id;
 

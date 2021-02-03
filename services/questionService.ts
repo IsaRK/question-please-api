@@ -1,17 +1,47 @@
-import { CosmosClient, UserDefinedFunctionResponse } from "@azure/cosmos";
+import { CosmosClient } from "@azure/cosmos";
 import { Context } from "@azure/functions";
+import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
+import { CosmosDBManagementClient } from "@azure/arm-cosmosdb";
 
 // Set connection string from CONNECTION_STRING value in local.settings.json
 const CONNECTION_STRING = process.env.CONNECTION_STRING;
+const SUBSCRIPTION_ID = process.env["AZURE_SUBSCRIPTION_ID"];
+const RESSOURCE_GROUPNAME = process.env["RESSOURCE_GROUPNAME"];
+const ACCOUNT_NAME = process.env["ACCOUNT_NAME"];
 
 const questionService = {
   init(context: Context | undefined) {
     try {
-      this.client = new CosmosClient(CONNECTION_STRING);
 
-      if (context !== undefined) {
-        context.log("*** Connection String " + String(CONNECTION_STRING));
+      let keys;
+
+      const options: msRestNodeAuth.MSIAppServiceOptions = {
+        // The clientId of the managed identity you would like the token for.
+        // Required, if your app service has user-assigned managed identities.
+        //
+        //     clientId: "your-managed-identity-client-id"
+        //
       }
+
+      msRestNodeAuth.loginWithAppServiceMSI(options).then((msiTokenRes) => {
+        console.log(msiTokenRes);
+
+        const client = new CosmosDBManagementClient(msiTokenRes, SUBSCRIPTION_ID);
+        const resourceGroupName = RESSOURCE_GROUPNAME;
+        const accountName = ACCOUNT_NAME;
+
+        client.databaseAccounts.listKeys(resourceGroupName, accountName).then((result: any) => {
+          console.log("The result is:");
+          console.log(result);
+          keys = result;
+        });
+
+      }).catch((err) => {
+        console.log(err);
+      });
+
+
+      this.client = new CosmosClient({ endpoint: CONNECTION_STRING, key: keys.primaryMasterKey });
 
       if (this.client === undefined) {
         throw new Error("questionService.client is undefined");
@@ -28,10 +58,6 @@ const questionService = {
       }
 
     } catch (err) {
-      if (context !== undefined) {
-        context.log(err.message);
-      }
-
       console.log(err.message);
     }
   },
@@ -70,7 +96,7 @@ const questionService = {
 
     if (this.container === undefined) {
       context.log("*** this.Container is undefined ***");
-      throw new Error("this.Container in ReadOne is undefined");
+      this.init(context);
     }
 
     if (this.container.items === undefined) {
